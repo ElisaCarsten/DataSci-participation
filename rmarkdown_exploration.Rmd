@@ -1,0 +1,56 @@
+---
+title: "rmarkdown_exploration"
+author: "Elisa"
+date: Last updated `r format(Sys.time(), "%d %B, %Y")`
+output: 
+  html_document:
+    theme: cerulean
+    toc: TRUE
+---
+
+
+```{r}
+# install.packages('gapminder')
+# install.packages('DT')
+# install.packages('tibble')
+```
+
+```{r}
+library(gapminder)
+library(DT)
+library(tibble)
+```
+
+```{r this is the name of the chunk, echo=FALSE}
+gapminder
+```
+
+mtcars is a dataset describing the features of automobiles from an old magazine. It has 7 variables.
+```{r}
+mtcars
+
+# three ways to subset
+# mtcars["mpg"] # keep in dataframe
+# mtcars[["mpg"]] # take out of dataframe
+# mtcars$mpg # take out of dataframe  # same as above
+
+mtcars["mpg"]
+mtcars[["mpg"]]
+mtcars$mpg
+
+mean(mtcars[["mpg"]])
+
+```
+The mean difference was `r mean(mtcars$mpg)`.
+
+```{r}
+mtcars[["cyl"]]
+```
+
+```{r}
+unique(mtcars[["cyl"]])
+```
+
+
+
+

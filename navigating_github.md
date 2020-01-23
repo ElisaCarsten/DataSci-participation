@@ -1,7 +1,5 @@
 *made change*
 
-*make changes*
-
 My participation repository:
 https://github.com/ElisaCarsten/DataSci-participation
 
