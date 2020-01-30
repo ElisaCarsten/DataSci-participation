@@ -1,0 +1,88 @@
+---
+title: "inclass_example2"
+author: "Elisa"
+date: "1/30/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# specify 50 bins
+```{r}
+ggplot(gapminder, aes(lifeExp)) +
+  geom_histogram(bins = 50)
+
+```
+
+
+# draw density curve instead (take all values and draw smooth curve to represent proportions)
+```{r}
+ggplot(gapminder, aes(lifeExp)) +
+  geom_density()
+```
+
+
+# you can also manipulate bandwidth (bw) but no example shown
+
+
+# jitter spreads out points by adding random noise so you can see them more clearly (which is ok here bc the x-axis is not meaningful beyond discrete continent categories). otherwise, it would just be one straight line
+```{r}
+ggplot(gapminder, aes(continent, lifeExp)) +
+  geom_jitter()
+```
+
+# boxplot
+```{r}
+ggplot(gapminder, aes(continent, lifeExp)) +
+  geom_boxplot()
+```
+
+
+# boxplot AND jitter on top of each other
+```{r}
+ggplot(gapminder, aes(continent, lifeExp)) +
+  geom_boxplot() +
+  geom_jitter()
+```
+
+# ridges
+```{r}
+ggplot(gapminder, aes(lifeExp, continent)) +
+  ggridges::geom_density_ridges()
+```
+
+
+# bar plots
+```{r}
+ggplot(mtcars, aes(cyl)) +
+  geom_bar()
+```
+# ggplot assumes cylinder is a continuous variable, so there are extra values on y-axis
+
+# bar plots with geom_col
+```{r}
+ggplot(mtcars, aes(cyl, count)) +
+  geom_col()
+```
+# for geom_col, you must specify x and y axes
+# not sure why it's not working
+
+
+# line charts
+```{r}
+tsibble::as_tsibble(co2) %>% 
+  rename(yearmonth = index,
+         conc = value) %>% 
+  mutate(month = lubridate::month(yearmonth, label = TRUE),
+         year  = lubridate::year(yearmonth)) %>% 
+  ggplot(aes(month, conc)) +
+  geom_line(aes(group = year), alpha = 0.5) +
+  ylab("CO2 Concentration")
+```
+
+
+
+
+

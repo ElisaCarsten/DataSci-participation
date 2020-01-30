@@ -1,0 +1,123 @@
+---
+title: "inclass_examples"
+author: "Elisa"
+date: "1/30/2020"
+output: html_document
+---
+
+Scatterplot with ggplot
+
+# use gapminder data, assign x = gdpPercap and y = lifeExp
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp))
+```
+
+
+# the graph is blank because we've only given it 2 out of 7 essential parts. we need to tell it which geometric object to use to plot points
+
+# look at the list of possible aesthetics
+?geom_point
+
+# added geom_point to specify that we want a scatterplot
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point()
+```
+
+# we have overplotted, all the points blend together
+
+# added alpha = 0.1 to specify what fraction of completely solid this is
+# alpha = 0.1 specifies that you need 10 points to get to a solid black color
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1)
+```
+
+# add color outside of aes function, which will make all points blue
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1, color = "blue")
+```
+
+# the scale of x-axis isn't very informative, so we can add a log transformation
+
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10("GDP per capita")
+```
+# you don't need to name the arguments if you put them in order
+
+# here is an example with the arguments explicitly named (added "name =" GDP per capita)
+# if you named the first one, you have to name all of them. for example, if you named "data = gapminder", then you must name the following arguments too.
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10(name = "GDP per capita")
+```
+
+# next, tell it to use a dollar format for the x-axis variable (GDP per capita)
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10("GDP per capita", labels = scales::dollar_format())
+```
+
+# scale here means you're pulling from the "scales" package
+# :: means "look for a function in a specific package (in this case, scales)"
+# sometimes different packages will use the same name; for instance, the "filter" function in dplyr and base r
+
+# add a theme to make it less ugly AND change y label
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10("GDP per capita", labels = scales::dollar_format()) +
+  theme_bw() +
+  ylab("Life Expectancy")
+```
+
+# change breaks for scale of lifeExp
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10("GDP per capita", labels = scales::dollar_format()) +
+  scale_y_continuous(breaks = c(10, 20, 30, 40, 50, 60)) +
+  theme_bw() +
+  ylab("Life Expectancy")
+```
+
+# make lifeExp scale begin at 0 (ylim)
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10("GDP per capita", labels = scales::dollar_format()) +
+  scale_y_continuous(breaks = c(10, 20, 30, 40, 50, 60)) + ylim(0, 200) +
+  theme_bw() +
+  ylab("Life Expectancy")
+```
+
+# make lifeExp scale begin at 0 (ylim)
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(alpha = 0.1) +
+  scale_x_log10("GDP per capita", labels = scales::dollar_format()) +
+  scale_y_continuous(breaks = seq(0, 100, by = 10)) + ylim(0, 100) +
+  theme_bw() +
+  ylab("Life Expectancy")
+```
+
+# not sure if this worked...
+
+
+
+
+# to add color by continent, add it INSIDE the aes function
+```{r scatterplot with ggplot}
+ggplot(gapminder, aes(gdpPercap, lifeExp)) +
+  geom_point(mapping = aes(color = continent), alpha = 0.1)
+```
+
+
+
+
+
