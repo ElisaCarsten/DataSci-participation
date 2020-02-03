@@ -124,12 +124,12 @@ You can store the output of the plot in a variable, too. Store the plot from 2(a
 p <- ggplot(mauna, aes(y = month)) +
   geom_line(aes(x = month, y = conc)) +
   ylab("conc")
-
 p
 
 p +
-  geom_point(colour = "green")
+  geom_point(aes(month, conc), color = "green", size = 0.5)
 ```
+
 
 ### 2(d)
 
@@ -137,7 +137,9 @@ What's wrong with the following code? Fix it.
 
 ```{r, fig.width = 5, fig.height = 2}
 ggplot(gapminder) +
-  geom_point(aes(x = gdpPercap, y = lifeExp, alpha = 0.1))
+  geom_point(aes(x = gdpPercap, y = lifeExp), alpha = 0.2, shape = 21, color = "blue", fill = "#CC99FF") +
+  scale_y_log10() +
+  scale_x_continuous(labels = scales::dollar_format())
 ```
 
 

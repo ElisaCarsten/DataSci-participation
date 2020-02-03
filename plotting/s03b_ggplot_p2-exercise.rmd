@@ -40,7 +40,7 @@ or `size` argument (attribution: ["R for data science"](https://r4ds.had.co.nz/d
 
 ```{r, fig.width = 5, fig.height = 2}
 ggplot(mpg, aes(cty, hwy)) + 
-  geom_point(mapping = aes(alpha = 0.1))
+  geom_point(alpha = 0.2)
 ```
 
 
@@ -54,11 +54,11 @@ also notice that `ggplot2` ignores the grouping of a tibble!
 
 ```{r, fig.width = 5, fig.height = 2}
 gapminder %>% 
-  group_by(country) %>% 
   ggplot(aes(year, lifeExp)) +
-  geom_line(mapping = aes(x = year, y = lifeExp, group = country))
+  geom_line(aes(group = country), alpha = 0.2) +
+  ylab("Life Expectancy")
 ```
-# this did not work
+
 
 ## Exercise 3: More gdpPercap vs lifeExp
 
@@ -70,7 +70,7 @@ gapminder %>%
 ```{r, fig.width = 5, fig.height = 2}
 ggplot(gapminder, aes(gdpPercap, lifeExp)) +
   geom_point(alpha = 0.2) +
-  scale_x_log10() +
+  scale_x_log10("GDP Per Capita", labels = scales::comma_format()) +
   facet_wrap(vars(continent))
 ```
 
@@ -85,9 +85,10 @@ ggplot(gapminder, aes(gdpPercap, lifeExp)) +
 ```{r, fig.width = 5, fig.height = 2}
 gapminder %>% 
   filter(continent != "Oceania") %>% 
-  ggplot(aes(gdpPercap, lifeExp)) +
-  facet_wrap(~ continent) +
-  geom_point(alpha = 0.2) +
+  ggplot(aes(gdpPercap, lifeExp, size = pop)) +
+  facet_wrap(~ continent, nrow = 1, scales = "free") +
+  geom_point(shape = 21, colour = "blue", fill = "#40b8d0") +
+  scale_size_area(name = "Population", labels = scales::comma_format()) +
   scale_x_log10(labels = scales::comma_format())
 ```
 
@@ -99,7 +100,7 @@ Instead of alpha transparency, suppose you're wanting to fix the overplotting is
 
 ```{r, fig.width = 5, fig.height = 2}
 ggplot(gapminder) +
-  geom_point(aes(gdpPercap, lifeExp, size = 0.1)) +
+  geom_point(aes(gdpPercap, lifeExp), shape = 20, size = 1) +
   scale_x_log10(labels = scales::dollar_format())
 ```
 
@@ -121,7 +122,8 @@ tribble(
   4, 0.4, 0.5
 ) %>% 
   ggplot(aes(x, y)) + 
-  geom_line()
+  geom_path(arrow = arrow(length = unit(0.15, "inches"))) +
+  geom_text(aes(label = time), nudge_x = 0, nudge_y = 0.045)
 ```
 
 ## Exercise 5: Life expectancies in Africa
@@ -136,9 +138,11 @@ There is also the problem of overlapping text in the x-axis labels. How could we
 gapminder %>% 
   filter(continent == "Americas") %>% 
   ggplot(aes(country, lifeExp)) + 
-  geom_point() +
+  geom_point(size = 1) +
   geom_boxplot() +
-  scale_x_discrete()
+  geom_jitter(shape = 21, size = 1, color = "blue", fill = "#40b8d0") +
+  scale_x_discrete() +
+  theme(axis.text.x = element_text(angle = 45))
 ```
 
 ### 5(b) Ridgeplots
@@ -148,9 +152,8 @@ We're starting with the same plot as above, but instead of the points + boxplot,
 ```{r, fig.width = 5, fig.height = 2}
 gapminder %>% 
   filter(continent == "Americas") %>% 
-  ggplot(aes(country, lifeExp)) + 
-  geom_point() +
-  geom_boxplot()
+  ggplot(aes(lifeExp, country)) + 
+  ggridges::geom_density_ridges(bandwidth = 2)
 ```
 
 ## Exercise 6: Bar plot madness
@@ -165,11 +168,19 @@ gapminder %>%
 - Capitalize the legend title.
 
 ```{r, fig.width = 5, fig.height = 2}
-mtcars %>% 
-  mutate(transmission = if_else(am == 0, "automatic", "manual")) %>% 
-  ggplot(aes(cyl)) +
-  geom_bar(aes(color = transmission))
+mtcars$cyl.fac <- as.factor(mtcars$cyl)
+
+ex6 <- mtcars %>% 
+  mutate(Transmission = if_else(am == 0, "automatic", "manual")) %>% 
+  ggplot(aes(fill = Transmission, x = cyl.fac, y = (..count..)/sum(..count..))) +
+  geom_bar(position = "dodge", color = "#009966", width = 0.5) +
+  scale_y_continuous(labels = scales::percent_format(accuracy = 1L), name = "Percent") +
+  scale_x_discrete(name = "Cylinders")
+
+ex6 + scale_fill_brewer(palette = 2)
 ```
+
+
 
 ### 6(b) Bar heights already calculated
 
@@ -184,7 +195,8 @@ Fix the following bar plot so that it shows these counts.
 
 ```{r}
 ggplot(hair, aes(Hair, n)) +
-  geom_bar()
+  geom_bar(stat = "identity") +
+  ylab("Count")
 ```
 
 ## Exercise 7: Tiling
@@ -201,13 +213,14 @@ _Hint:_ What's the title of this exercise?
 
 ```{r}
 ggplot(hair_eye, aes(Hair, Eye)) +
-  geom_point(aes(colour = n))
+  geom_tile(aes(fill = n))
 ```
 
 By the way, `geom_count()` is like `geom_bar()`: it counts the number of overlapping points.
 
 
 ## Additional take-home practice
+# Don't need to do these!!
 
 If you'd like some practice, give these exercises a try
 
