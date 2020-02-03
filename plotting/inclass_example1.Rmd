@@ -114,7 +114,7 @@ ggplot(gapminder, aes(gdpPercap, lifeExp)) +
 # to add color by continent, add it INSIDE the aes function
 ```{r scatterplot with ggplot}
 ggplot(gapminder, aes(gdpPercap, lifeExp)) +
-  geom_point(mapping = aes(color = continent), alpha = 0.1)
+  geom_point(mapping = aes(color = continent), alpha = 0.15)
 ```
 
 

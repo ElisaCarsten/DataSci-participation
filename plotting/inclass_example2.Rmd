@@ -64,7 +64,7 @@ ggplot(mtcars, aes(cyl)) +
 # bar plots with geom_col
 ```{r}
 ggplot(mtcars, aes(cyl, count)) +
-  geom_col()
+  geom_col(mapping = aes(cyl, count))
 ```
 # for geom_col, you must specify x and y axes
 # not sure why it's not working
