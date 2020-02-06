@@ -176,6 +176,8 @@ gapminder %>%
 ```
 
 
+
+
 # Back to Guide 
 
 Return to guide at the section on *Relational/Comparison and Logical Operators in R*.
@@ -189,26 +191,70 @@ Return to guide at the section on *Relational/Comparison and Logical Operators i
 
 ```{r}
 gapminder %>%
-  filter(FILL_THIS_IN)
+  filter(pop > 100000000)
+
+# if you want to run analyses on this, do the following
+gapminder %>%
+  filter(pop > 100000000) %>% 
+  analyses()
+
+# can also create a new dataset
+data_clean <- gapminder %>% 
+  filter(pop > 200000) %>% 
+  analyses()
+
 ```
 
 2. Your turn: of those rows filtered from step 1., only take data from Asia.
 
 ```{r}
 gapminder %>%
-  filter(FILL_THIS_IN)
+  filter(pop > 100000000) %>% 
+  filter(continent == "Asia")
+
+# this also works
+gapminder %>%
+  filter(pop > 100000000, continent == "Asia")
+
+# this also works
+gapminder %>%
+  filter(pop > 100000000 & continent == "Asia")
 ```
 
 3. Repeat 2, but take data from countries Brazil, and China. 
 
 ```{r}
 gapminder %>%
-  filter(FILL_THIS_IN)
+  filter(pop > 100000000, country == "Brazil" | country == "China")
+
+# can also use the %in% function, which will check whether each value for country is in our list of options, which only includes Brazil and China
+gapminder %>%
+  filter(pop > 100000000, country %in% c("Brazil", "China"))
+
+# THIS WILL NOT YIELD THE SAME RESULT because it will compare one element at a time to each vector, then recycle. so is the first value equal to Brazil? next, is the second value equal to China? next, is the third value equal to Brazil? etc...
+gapminder %>%
+  filter(pop > 100000000, country == c("Brazil", "China"))
+
+# Notes about this
+
+# country == c("Brazil", "China") means the following:
+# A = A (True or false)
+# B = B (True or false)
+# C = A (True or false)
+# D = B (True or false)
+# 
+# country %in% c("Brazil", "China") means the following:
+# A = A or B (True or false)
+# B = A or B (True or false)
+# C = A or B (True or false)
+# D = A or B (True or false)
+
 ```
+
 
 ## `mutate()` (10 min)
 
-The `mutate()` function _creates_ new columns in the tibble by transforming other variables. Like `select()`, `filter()`, and `arrange()`, the `mutate()` function also takes a tibble as its first argument, and returns a tibble. 
+The `mutate()` function _creates_ new columns in the tibble by transforming other variables. Like `select()`, `filter()`, and `arrange()`, the `mutate()` function also takes a tibble as its first argument, and returns a tibble. This function keeps all other variables.
 
 The general syntax is:
 
@@ -222,8 +268,31 @@ Let's get:
 - GDP in billions, named (`gdpBill`), rounded to two decimals.
 
 ```{r}
+# add step 1
 gapminder %>%
-  mutate(FILL_THIS_IN)
+  mutate(grossGDP = gdpPercap * pop)
+
+# add step 2
+gapminder %>%
+  mutate(grossGDP = gdpPercap * pop,
+         gdpBill = grossGDP/1000000000)
+
+# add step 3
+gapminder %>%
+  mutate(grossGDP = gdpPercap * pop,
+         gdpBill = round(grossGDP/1000000000, 2))
+# can also specify "digits = 2"
+
+# another way, using round() function
+gapminder %>%
+  mutate(grossGDP = gdpPercap * pop,
+         gdpBill = (grossGDP/1000000000) %>% round(2))
+
+# drop some variables (gdpPercap, pop, grossGDP)
+gapminder %>%
+  mutate(grossGDP = gdpPercap * pop,
+         gdpBill = (grossGDP/1000000000) %>% round(2)) %>% 
+           select(-gdpPercap, -pop, -grossGDP)
 ```
 
 Notice the backwards compatibility! No need for loops!
@@ -232,7 +301,12 @@ Try the same thing, but with `transmute` (drops all other variables).
 
 ```{r}
 gapminder %>%
-  transmute(FILL_THIS_IN)
+  transmute(gdpBill = (pop * gdpPercap / 1000000000) %>%  round(2))
+
+# if you want to keep some other variables, just call them first
+gapminder %>%
+  transmute(country, continent, lifeExp,
+            gdpBill = (pop * gdpPercap / 1000000000) %>%  round(2))
 ```
 
 The `if_else` function is useful for changing certain elements in a data frame.
@@ -241,8 +315,28 @@ Example: Suppose Canada's 1952 life expectancy was mistakenly entered as 68.8 in
 
 ```{r}
 gapminder %>%
-  mutate(FILL_THIS_IN)
+  mutate(lifeExp = if_else(country == "Canada" & year == 1952,
+                           70,
+                           lifeExp)) %>% 
+  filter(country == "Canada")
+
+# if_else function: if_else(condition, what happens if true, what happens if false)
+# if_else(if country is Canada and year is 1952, then make the lifeExp value be 70. if this isn't true, stick with current lifeExp value)
+# last line is just to view only Canada to check if it worked
 ```
+
+
+Replace life expectancy for Bangladesh with NA_real_ but leave all other variables.
+
+```{r}
+gapminder %>%
+  mutate(lifeExp = if_else(country == "Bangladesh",
+                           NA_real_,
+                           lifeExp)) %>% 
+  filter(country == "Bangladesh")
+```
+
+
 
 Your turn: Make a new column called `cc` that pastes the country name followed by the continent, separated by a comma. (Hint: use the `paste` function with the `sep=", "` argument).
 
