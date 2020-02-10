@@ -350,7 +350,6 @@ to work with vectors and do their computation on each element of the vector(s).
 
 Now is a good time to knit, commit, push!
 
-
 # Back to Guide Again
 
 Let's head back to the guide at the section on `summarize()`.
@@ -364,9 +363,22 @@ Let's do some practice with grouping (and ungrouping) and summarizing data frame
 
 ```{r}
 gapminder %>% 
-  group_by(FILL_THIS_IN) %>% 
-  FILL_THIS_IN(min_life = min(lifeExp))
+  group_by(continent, year) %>% 
+  mutate(min_life = min(lifeExp)) %>% 
+  arrange(min_life)
 ```
+
+```{r Americas}
+# this is only for Americas
+gapminder %>% 
+  as_tibble() %>% 
+  filter(continent == "Americas") %>%
+  rowwise() %>% 
+    mutate(min_life = min(lifeExp)) %>% 
+  group_by(year) %>% 
+  ungroup()
+```
+
 
 
 2. Let's compute the mean Agreeableness score across items for each participant 
@@ -384,9 +396,50 @@ psych::bfi %>%
 Now compute mean scores for the other Big Five traits, as well as 
 `sd` and `min` scores for reach person.
 
-```{r}
-
+```{r Conscientiousness}
+psych::bfi %>%
+  as_tibble() %>% 
+  select(C1:C5) %>% 
+  rowwise() %>% 
+    mutate(C_mean = mean(c(C1, C2, C3, C4, C5), na.rm = TRUE)) %>% 
+    mutate(C_sd = sd(c(C1, C2, C3, C4, C5), na.rm = TRUE)) %>% 
+    mutate(C_min = min(c(C1, C2, C3, C4, C5), na.rm = TRUE)) %>% 
+  ungroup()
 ```
+
+```{r Extraversion}
+psych::bfi %>%
+  as_tibble() %>% 
+  select(E1:E5) %>% 
+  rowwise() %>% 
+    mutate(E_mean = mean(c(E1, E2, E3, E4, E5), na.rm = TRUE)) %>% 
+    mutate(E_sd = sd(c(E1, E2, E3, E4, E5), na.rm = TRUE)) %>% 
+    mutate(E_min = min(c(E1, E2, E3, E4, E5), na.rm = TRUE)) %>% 
+  ungroup()
+```
+
+```{r Neuroticism}
+psych::bfi %>%
+  as_tibble() %>% 
+  select(N1:N5) %>% 
+  rowwise() %>% 
+    mutate(N_mean = mean(c(N1, N2, N3, N4, N5), na.rm = TRUE)) %>% 
+    mutate(N_sd = sd(c(N1, N2, N3, N4, N5), na.rm = TRUE)) %>% 
+    mutate(N_min = min(c(N1, N2, N3, N4, N5), na.rm = TRUE)) %>% 
+  ungroup()
+```
+
+```{r Openness}
+psych::bfi %>%
+  as_tibble() %>% 
+  select(O1:O5) %>% 
+  rowwise() %>% 
+    mutate(O_mean = mean(c(O1, O2, O3, O4, O5), na.rm = TRUE)) %>% 
+    mutate(O_sd = sd(c(O1, O2, O3, O4, O5), na.rm = TRUE)) %>% 
+    mutate(O_min = min(c(O1, O2, O3, O4, O5), na.rm = TRUE)) %>% 
+  ungroup()
+```
+
 
 ** There are a few other ways to do this sort of computation.**
 
@@ -425,7 +478,11 @@ group_by(country) %>%
 ```
 
 ```{r}
-
+mutate(rel_growth = FILL_THIS_IN) %>% 
+arrange(FILL_THIS_IN) %>% 
+gapminder %>% 
+knitr::kable()
+group_by(country) %>% 
 ```
 
 
