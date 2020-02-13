@@ -251,7 +251,7 @@ educ <-
          E_mean = mean(c(E1, E2, E3, E4, E5), na.rm = TRUE),
          N_mean = mean(c(N1, N2, N3, N4, N5), na.rm = TRUE),
          O_mean = mean(c(O1, O2, O3, O4, O5), na.rm = TRUE)) %>% 
-  select(educ.factor, A_mean, C_mean, E_mean, N_mean, O_mean) %>% 
+  select(education, A_mean, C_mean, E_mean, N_mean, O_mean) %>% 
   print()
 ```
 
@@ -264,15 +264,17 @@ bfi %>%
   FILL_THIS_IN(FILL_THIS_IN) %>% 
   FILL_THIS_IN(FILL_THIS_IN)
 
-bfi %>% 
-  mutate(education = as.factor(education)) %>% 
+educ %>% 
+  group_by(education) %>% 
   rowwise() %>% 
   summarize(
-    A_mean = mean(c(A1, A2, A3, A4, A5), na.rm = TRUE),
-    C_mean = mean(c(C1, C2, C3, C4, C5), na.rm = TRUE),
-    E_mean = mean(c(E1, E2, E3, E4, E5), na.rm = TRUE),
-    N_mean = mean(c(N1, N2, N3, N4, N5), na.rm = TRUE),
-    O_mean = mean(c(O1, O2, O3, O4, O5), na.rm = TRUE)) %>% 
+    education = n(),
+    A_mean = n(),
+    C_mean = n(),
+    E_mean = n(),
+    N_mean = n(),
+    O_mean = n()) %>% 
+  ungroup() %>% 
   print()
 ```  
 
