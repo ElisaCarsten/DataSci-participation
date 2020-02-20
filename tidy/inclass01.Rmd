@@ -1,0 +1,84 @@
+---
+title: "inclass 2.20.20"
+author: "Elisa"
+date: "2/20/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyr)
+library(tidyverse)
+```
+
+```{r}
+haireye %>% 
+  knitr::kable()
+```
+
+
+```{r}
+haireye_untidy <- haireye %>% 
+  mutate(eye = str_c(eye, "_eyed")) %>% 
+  pivot_wider(id_cols = hair, names_from = eye, values_from = n)
+
+haireye_untidy
+```
+
+
+```{r}
+haireye_untidy %>% 
+  pivot_longer(cols      = c(Blue_eyed, Brown_eyed, Green_eyed, Hazel_eyed), # which columns to pivot
+               names_to  = "eye", # label what column they're going into
+               values_to = "n") # label value
+```
+
+Shorter, more concise code for doing this. However, it may be an issue if your eye color columns switch order in a later version of the data.
+```{r}
+haireye_untidy %>% 
+  pivot_longer(cols      = Blue_eyed:Hazel_eyed, # select a range of columns
+               names_to  = "eye",
+               values_to = "n")
+```
+
+The clearest option to use.
+```{r}
+haireye_untidy %>% 
+  pivot_longer(cols      = contains("eyed"), # take all columns that use the word "eye"
+               names_to  = "eye", # name new column
+               values_to = "n")
+```
+
+Select everything except the hair column.
+```{r}
+haireye_untidy %>% 
+  pivot_longer(cols      = -hair,
+               names_to  = "eye",
+               values_to = "n")
+```
+
+
+The opposite of pivot_longer is pivot_wider.
+```{r}
+haireye %>% 
+  pivot_wider(id_cols     = hair, # columns you want to KEEP
+              names_from  = eye, # which column you're taking from
+              values_from = n) # which part you want for your new column
+```
+
+
+
+Iris dataset
+
+```{r}
+iris2 %>% 
+  pivot_longer(cols      = c(-species, -id), 
+               names_to  = c("part", "dimension"),
+               names_sep = "_",
+               values_to = "measurement")
+```
+
+

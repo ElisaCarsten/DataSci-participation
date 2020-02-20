@@ -29,6 +29,7 @@ Load the `tidyverse` package.
 ```{r load packages, warning = FALSE, message = FALSE}
 # load your packages here:
 library(tidyverse)
+library(psych)
 ```
     
 
@@ -260,22 +261,33 @@ educ <-
    each score in each group). Also report the sample size within each group.
    
 ```{r}
-bfi %>% 
-  FILL_THIS_IN(FILL_THIS_IN) %>% 
-  FILL_THIS_IN(FILL_THIS_IN)
-
 educ %>% 
   group_by(education) %>% 
-  rowwise() %>% 
-  summarize(
-    education = n(),
-    A_mean = n(),
+  summarize(n_education = n(),
+      A_mean = n(),
     C_mean = n(),
     E_mean = n(),
     N_mean = n(),
-    O_mean = n()) %>% 
+    O_mean = n(),
+      A_sd = n(),
+    C_sd = n(),
+    E_sd = n(),
+    N_sd = n(),
+    O_sd = n(),
+      A_min = n(),
+    C_min = n(),
+    E_min = n(),
+    N_min = n(),
+    O_min = n(),
+      A_max = n(),
+    C_max = n(),
+    E_max = n(),
+    N_max = n(),
+    O_max = n()) %>% 
   ungroup() %>% 
   print()
+
+
 ```  
 
 

@@ -1,0 +1,180 @@
+---
+title: "s06 Exercises: Pivoting and tidy data"
+author: Elisa
+output: 
+  html_document:
+    keep_md: true
+    theme: paper
+---
+
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+lotr  <- read_csv("https://raw.githubusercontent.com/jennybc/lotr-tidy/master/data/lotr_tidy.csv")
+guest <- read_csv("https://raw.githubusercontent.com/USF-Psych-DataSci/Classroom/master/data/wedding/attend.csv")
+email <- read_csv("https://raw.githubusercontent.com/USF-Psych-DataSci/Classroom/master/data/wedding/emails.csv")
+```
+
+<!---The following chunk allows errors when knitting--->
+
+```{r allow errors, echo = FALSE}
+knitr::opts_chunk$set(error = TRUE, warning = FALSE)
+```
+
+
+## Exercise 1: Univariate Pivoting
+
+Consider the Lord of the Rings data:
+
+```{r}
+lotr
+```
+
+1. Would you say this data is in tidy format?
+
+   <!-- Describe why or why not in this space. -->
+
+2. Widen the data so that we see the words spoken by each race, by putting race as its own column.
+
+```{r}
+(lotr_wide <- lotr %>% 
+  pivot_wider(id_cols = c(-Race, -Words), 
+              names_from = Race, 
+              values_from = Words))
+```
+
+3. Re-lengthen the wide LOTR data from Question 2 above.
+
+```{r}
+lotr_wide %>% 
+  pivot_longer(cols = c(Elf, Hobbit, Man), 
+               names_to  = "Race", 
+               values_to = "Words")
+```
+
+
+## Exercise 2: Multivariate Pivoting
+
+Congratulations, you're getting married! In addition to the wedding, you've 
+decided to hold two other events: a day-of brunch and a day-before round of 
+golf. You've made a guestlist of attendance so far, along with food preference 
+for the food events (wedding and brunch).
+
+```{r}
+guest %>% 
+  DT::datatable(rownames = FALSE)
+```
+
+1. Put "meal" and "attendance" as their own columns, with the events living in a new column.
+
+```{r}
+(guest_long <- guest %>% 
+  pivot_longer(cols      = c(-party, -name),
+               names_to  = c(".value", "Event"),
+               names_sep = "_"))
+```
+
+
+
+2. Use `tidyr::separate()` to split the name into two columns: "first" and 
+"last". Then, re-unite them with `tidyr::unite()`.
+
+```{r}
+gl <- guest_long %>% 
+  separate(name, into = c("First", "Last"))
+gl
+  # unite(col = "name", FILL_THIS_IN, sep = FILL_THIS_IN)
+
+guest_long %>% 
+  unite(col = "name",  sep = c(First, Last))
+
+gl %>% 
+  unite(col = "name", c("First", "Last"), sep = " ")
+```
+
+3. Which parties still have a "PENDING" status for all members and all events?
+
+```{r}
+guest_long %>% 
+  group_by(party) %>% 
+  summarize(all_pending = all(attendance == "PENDING"))
+```
+
+4. Which parties still have a "PENDING" status for all members for the wedding?
+
+```{r}
+guest_long %>% 
+  group_by(party) %>% 
+  filter(Event == "wedding") %>% 
+  summarize(pending_wedding = all(attendance == "PENDING"))
+```
+
+
+5. Put the data back to the way it was.
+
+```{r}
+guest_orig <-
+
+guest_long %>% 
+  pivot_wider(id_cols     = c(party, name), 
+              names_from  = Event,
+              names_sep   = "_", 
+              values_from = c(meal, attendance))
+```
+
+6. You also have a list of emails for each party, in this worksheet under the 
+   object `email`. Change this so that each person gets their own row. 
+   Use `tidyr::separate_rows()`
+
+```{r}
+email %>% 
+  separate_rows(guest, sep = ",")
+```
+
+
+## Exercise 3: Making tibbles
+
+1. Create a tibble that has the following columns:
+
+- A `label` column with `"Sample A"` in its entries.
+- 100 random observations drawn from the N(0,1) distribution in the column `x`
+  - "N" means the normal distribution. "(0, 1)" means mean = 0, sd = 1.
+  - Use `rnorm()`
+- `y` calculated as the `x` values + N(0,1) error. 
+
+```{r}
+n <- 100
+FILL_THIS_IN(label = FILL_THIS_IN,
+             FILL_THIS_IN = rnorm(n),
+             FILL_THIS_IN)
+```
+
+
+2. Generate a Normal sample of size 100 for each combination of the following 
+means (`mu`) and standard deviations (`sd`).
+
+```{r}
+n <- 100
+mu <- c(-5, 0, 5)
+sd <- c(1, 3, 10)
+FILL_THIS_IN(mu = mu, sd = sd) %>% 
+  group_by_all() %>% 
+  mutate(z = list(rnorm(n, mu, sd))) %>% 
+  FILL_THIS_IN
+```
+
+
+3. Fix the `experiment` tibble below (originally defined in the documentation 
+of the `tidyr::expand()` function) so that all three repeats are displayed for 
+each person, and the measurements are kept. Some code is given, but it doesn't
+quite work. It needs a few adjustments. What are they?
+
+```{r}
+experiment <- tibble(
+  name = rep(c("Alex", "Robert", "Sam"), c(3, 2, 1)),
+  trt  = rep(c("a", "b", "a"), c(3, 2, 1)),
+  rep = c(1, 2, 3, 1, 2, 1),
+  measurement_1 = runif(6),
+  measurement_2 = runif(6)
+)
+experiment %>% expand(name, trt, rep)
+```
