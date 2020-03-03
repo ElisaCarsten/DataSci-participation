@@ -84,9 +84,6 @@ gl <- guest_long %>%
 gl
   # unite(col = "name", FILL_THIS_IN, sep = FILL_THIS_IN)
 
-guest_long %>% 
-  unite(col = "name",  sep = c(First, Last))
-
 gl %>% 
   unite(col = "name", c("First", "Last"), sep = " ")
 ```
@@ -112,13 +109,14 @@ guest_long %>%
 5. Put the data back to the way it was.
 
 ```{r}
-guest_orig <-
+guest_long
 
-guest_long %>% 
+guest_orig <- guest_long %>% 
   pivot_wider(id_cols     = c(party, name), 
               names_from  = Event,
               names_sep   = "_", 
-              values_from = c(meal, attendance))
+              values_from = c(meal, attendance)) %>% 
+  print()
 ```
 
 6. You also have a list of emails for each party, in this worksheet under the 
