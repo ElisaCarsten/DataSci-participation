@@ -17,6 +17,9 @@ suppressPackageStartupMessages(library(scales))
 suppressPackageStartupMessages(library(tsibble))
 suppressPackageStartupMessages(library(here))
 suppressPackageStartupMessages(library(readxl))
+suppressPackageStartupMessages(library(haven))
+suppressPackageStartupMessages(library(ggthemes))
+suppressPackageStartupMessages(library(svglite))
 ```
 
 Load in gapminder dataset
@@ -65,6 +68,58 @@ Import dataset from online.
 xls_url <- "http://gattonweb.uky.edu/sheather/book/docs/datasets/GreatestGivers.xls"
 download.file(xls_url, here::here("data", "s008_data", "some_file.xls"), mode = "wb")
 ```
-
 Note: "some_file.xls" is not recommended as a file name.
+
+Load in clevel data using haven package
+```{r}
+(clevel <- haven::read_spss(here::here("data", "s008_data", "clevel.sav")))
+```
+
+Clean clevel data
+Language and gender variables are currently SPSS format (numeric), but we want them as factors in R. Here, we convert them.
+```{r}
+clevel_cleaned <-
+  clevel %>% 
+  mutate(language = as_factor(language),
+         gender = as_factor(gender),
+         isClevel = factor(isClevel, 
+                           levels = c(0, 1), 
+                           labels = c("No", "Yes"))
+  ) %>% 
+  print()
+```
+
+Save cleaned file as a new CSV file so it's smaller and easier to import again in the future.
+```{r}
+write_csv(clevel_cleaned, here::here("data", "s008_data", "clevel_cleaned.csv"))
+```
+
+Make a plot
+```{r}
+clevel_plot <-
+  clevel_cleaned %>% 
+  mutate(isClevel = recode(isClevel, 
+                           No = "Below C-level", 
+                           Yes = "C-level"),
+         gender = recode(gender,
+                         Female = "Women",
+                         Male = "Men")) %>% 
+  ggplot(aes(paste(isClevel, gender, sep = "\n"), Extraversion, color = gender)) +
+  geom_boxplot() +
+  geom_jitter(height = .2) +
+  scale_color_manual(values = c("#1b9e77", "#7570b3")) +
+  ggtitle("Extraversion Stan Scores") +
+  scale_y_continuous(breaks = 1:9) +
+  ggthemes::theme_fivethirtyeight()
+
+print(clevel_plot)
+```
+
+
+Use ggsave function to save plot. .svg is the preferable format, but it's not working due to some error, so we're saving as a .jpeg here.
+```{r}
+dir.create(here::here("output", "figures"), recursive = TRUE)
+ggsave(here::here("output", "figures", "clevel_extraversion.jpeg"), clevel_plot)
+```
+
 
