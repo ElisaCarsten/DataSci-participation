@@ -16,6 +16,7 @@ suppressPackageStartupMessages(library(tidyverse))
 suppressPackageStartupMessages(library(scales))
 suppressPackageStartupMessages(library(tsibble))
 suppressPackageStartupMessages(library(here))
+suppressPackageStartupMessages(library(readxl))
 ```
 
 Load in gapminder dataset
@@ -48,5 +49,22 @@ Imported csv file into R again by specifying the path where it exists.
 read_csv(here::here("data", "s008_data", "exported_file.csv"))
 ```
 
+Read file from internet
+```{r}
+url <- "http://gattonweb.uky.edu/sheather/book/docs/datasets/magazines.csv"
+```
 
+Import excel file from online. First, create the necessary folders so you the specified file path in the next step exists.
+```{r}
+dir.create(here::here("data", "s008_data"), recursive = TRUE)
+```
+Recursive = TRUE means create any folders along the way. If recursive = FALSE, then it will only create the newest folder.
+
+Import dataset from online.
+```{r}
+xls_url <- "http://gattonweb.uky.edu/sheather/book/docs/datasets/GreatestGivers.xls"
+download.file(xls_url, here::here("data", "s008_data", "some_file.xls"), mode = "wb")
+```
+
+Note: "some_file.xls" is not recommended as a file name.
 
