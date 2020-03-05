@@ -1,0 +1,34 @@
+---
+title: "File Input/Output"
+author: "Elisa"
+date: "3/5/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Load in libraries
+```{r load libraries}
+suppressPackageStartupMessages(library(gapminder))
+suppressPackageStartupMessages(library(tidyverse))
+```
+
+Load in gapminder dataset
+```{r}
+(gap_asia_2007 <- gapminder %>% filter(year == 2007, continent == "Asia"))
+```
+Note: Putting the whole thing in parentheses will have the same result as the print() function.
+
+```{r}
+write_csv(gap_asia_2007, "exported_file.csv")
+```
+
+Check working directory
+```{r}
+getwd()
+```
+
+
+
