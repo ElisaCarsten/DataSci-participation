@@ -13,6 +13,9 @@ Load in libraries
 ```{r load libraries}
 suppressPackageStartupMessages(library(gapminder))
 suppressPackageStartupMessages(library(tidyverse))
+suppressPackageStartupMessages(library(scales))
+suppressPackageStartupMessages(library(tsibble))
+suppressPackageStartupMessages(library(here))
 ```
 
 Load in gapminder dataset
@@ -28,6 +31,21 @@ write_csv(gap_asia_2007, "exported_file.csv")
 Check working directory
 ```{r}
 getwd()
+```
+
+Relative file path, according to working directory
+```{r}
+file.path("data", "cats_data.csv")
+```
+
+Save dataset in folders within working directory
+```{r}
+write_csv(gap_asia_2007, here::here("data", "s008_data", "exported_file.csv"))
+```
+
+Imported csv file into R again by specifying the path where it exists.
+```{r}
+read_csv(here::here("data", "s008_data", "exported_file.csv"))
 ```
 
 
