@@ -1,0 +1,104 @@
+---
+title: "s11 Exercises: Model-Fitting"
+output: 
+  html_document:
+    keep_md: true
+    theme: paper
+---
+
+```{r allow errors, echo = FALSE}
+knitr::opts_chunk$set(error = TRUE)
+```
+
+
+```{r, echo = FALSE}
+library(tidyverse)
+library(broom)
+library(gapminder)
+
+set.seed(1234)
+theme_set(theme_minimal())
+```
+
+
+```{r}
+ggplot(mtcars, aes(wt, mpg)) +
+  geom_point() +
+  labs(x = "Weight (1000's of lbs)")
+```
+
+
+```{r}
+ggplot(mtcars, aes(qsec, drat)) +
+  geom_point() +
+  labs(x = "Quarter Mile Time",
+       y = "Rear Axle Ratio")
+```
+
+
+```{r}
+ggplot(modelr::sim1, aes(x, y)) +
+  geom_point()
+```
+
+
+```{r}
+models <- tibble(
+  a1 = runif(250, -20, 40),
+  a2 = runif(250, -5, 5)
+)
+
+ggplot(modelr::sim1, aes(x, y)) +
+  geom_abline(aes(intercept = a1,
+                  slope = a2),
+              data = models,
+              alpha = 1/4) +
+  geom_point()
+```
+
+```{r}
+ggplot(modelr::sim1, aes(x, y)) +
+  geom_point() +
+  geom_smooth(method = "lm")
+```
+
+
+```{r}
+(gapminder_europe <- filter(gapminder, continent == "Europe"))
+```
+
+
+```{r}
+(mod_europe <- lm(lifeExp ~ year, data = gapminder_europe))
+```
+
+
+```{r}
+(mod_europe <- lm(lifeExp ~ I(year - 1952), data = gapminder_europe))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
