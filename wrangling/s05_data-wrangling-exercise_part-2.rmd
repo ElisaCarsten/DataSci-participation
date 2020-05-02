@@ -154,13 +154,15 @@ Let's do some practice with grouping (and ungrouping) and summarizing data frame
 
 ```{r}
 gapminder %>% 
-  group_by(FILL_THIS_IN) %>% 
-  FILL_THIS_IN(min_life = min(lifeExp))
+  group_by(continent, year) %>% 
+  summarize(min_life = min(lifeExp))
 
 gapminder %>% 
-  group_by(FILL_THIS_IN) %>% 
-  mutate(min_life = min(lifeExp)) %>% 
+  group_by(continent, year) %>% 
+  summarize(min_life = min(lifeExp)) %>% 
+  select(continent, country, year, min_life) %>% 
   arrange(min_life)
+
 ```
 
 
@@ -244,15 +246,15 @@ psych::bfi %>%
    
 ```{r}
 educ <-
-  bfi %>% 
+  psych::bfi %>% 
+  mutate(education = factor(education)) %>% 
   rowwise() %>% 
-  mutate(education = as.factor(education),
-         A_mean = mean(c(A1, A2, A3, A4, A5), na.rm = TRUE),
-         C_mean = mean(c(C1, C2, C3, C4, C5), na.rm = TRUE),
-         E_mean = mean(c(E1, E2, E3, E4, E5), na.rm = TRUE),
-         N_mean = mean(c(N1, N2, N3, N4, N5), na.rm = TRUE),
-         O_mean = mean(c(O1, O2, O3, O4, O5), na.rm = TRUE)) %>% 
-  select(education, A_mean, C_mean, E_mean, N_mean, O_mean) %>% 
+  mutate(A_mean = mean(c(A1, A2, A3, A4, A5), na.rm = TRUE),
+        C_mean = mean(c(C1, C2, C3, C4, C5), na.rm = TRUE),
+        N_mean = round(mean(c(N1, N2, N3, N4, N5), na.rm = TRUE), 2),
+        O_mean = mean(c(O1, O2, O3, O4, O5), na.rm = TRUE),
+        E_mean = mean(c(E1, E2, E3, E4, E5), na.rm = TRUE)) %>% 
+  select(education, A_mean, C_mean, E_mean, N_mean, O_mean, everything()) %>% 
   print()
 ```
 
@@ -263,30 +265,28 @@ educ <-
 ```{r}
 educ %>% 
   group_by(education) %>% 
-  summarize(n_education = n(),
-      A_mean = n(),
-    C_mean = n(),
-    E_mean = n(),
-    N_mean = n(),
-    O_mean = n(),
-      A_sd = n(),
-    C_sd = n(),
-    E_sd = n(),
-    N_sd = n(),
-    O_sd = n(),
-      A_min = n(),
-    C_min = n(),
-    E_min = n(),
-    N_min = n(),
-    O_min = n(),
-      A_max = n(),
-    C_max = n(),
-    E_max = n(),
-    N_max = n(),
-    O_max = n()) %>% 
-  ungroup() %>% 
+  summarise(A_mean = mean(c(A1, A2, A3, A4, A5), na.rm = TRUE),
+        C_mean = mean(c(C1, C2, C3, C4, C5), na.rm = TRUE),
+        N_mean = round(mean(c(N1, N2, N3, N4, N5), na.rm = TRUE), 2),
+        O_mean = mean(c(O1, O2, O3, O4, O5), na.rm = TRUE),
+        E_mean = mean(c(E1, E2, E3, E4, E5), na.rm = TRUE),
+        A_sd = sd(c(A1, A2, A3, A4, A5), na.rm = TRUE),
+        C_sd = sd(c(C1, C2, C3, C4, C5), na.rm = TRUE),
+        N_sd = round(sd(c(N1, N2, N3, N4, N5), na.rm = TRUE), 2),
+        O_sd = sd(c(O1, O2, O3, O4, O5), na.rm = TRUE),
+        E_sd = sd(c(E1, E2, E3, E4, E5), na.rm = TRUE),
+        A_min = min(c(A1, A2, A3, A4, A5), na.rm = TRUE),
+        C_min = min(c(C1, C2, C3, C4, C5), na.rm = TRUE),
+        N_min = round(min(c(N1, N2, N3, N4, N5), na.rm = TRUE), 2),
+        O_min = min(c(O1, O2, O3, O4, O5), na.rm = TRUE),
+        E_min = min(c(E1, E2, E3, E4, E5), na.rm = TRUE),
+        A_max = max(c(A1, A2, A3, A4, A5), na.rm = TRUE),
+        C_max = max(c(C1, C2, C3, C4, C5), na.rm = TRUE),
+        N_max = round(max(c(N1, N2, N3, N4, N5), na.rm = TRUE), 2),
+        O_max = max(c(O1, O2, O3, O4, O5), na.rm = TRUE),
+        E_max = max(c(E1, E2, E3, E4, E5), na.rm = TRUE),
+            n = length(education)) %>% 
   print()
-
 
 ```  
 
